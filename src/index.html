@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="description" content="Editor de partidas online para RPG Maker, Ren'Py, Unity, Unreal Engine 4/5, Godot, juegos HTML y muchos formatos adicionales.">
+    <meta property="og:description" content="Editor de partidas online para RPG Maker, Ren'Py, Unity, Unreal Engine 4/5, Godot, juegos HTML y muchos formatos adicionales." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a" />
+    <meta http-equiv="Content-Language" content="es" />
+    <title>Editor de partidas online</title>
+    <link rel="canonical" href="https://www.saveeditonline.com/" />
+    <meta property="og:url" content="https://www.saveeditonline.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Editor de partidas online" />
+    <meta property="og:image" content="assets/image/rpgmaker-vxace.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="256" />
+    <meta property="og:image:height" content="256" />
+    <script src="assets/js/jquery-1.12.4.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script>
+        window.tailwind = { corePlugins: { preflight: false } };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
+    <script>
+        (function() {
+            function setCookie(name, value) {
+                document.cookie = name + "=" + value + "; path=/; max-age=31536000; samesite=lax";
+            }
+
+            var key = 'save-editor-theme-v2';
+            var pref = null;
+
+            try {
+                var stored = localStorage.getItem(key);
+                if (stored === '0' || stored === '1') pref = stored;
+            } catch (e) { }
+
+            if (pref === null) {
+                try {
+                    var cookie = document.cookie.replace(new RegExp('(?:(?:^|.*;\\s*)' + key + '\\s*\\=\\s*([^;]*).*$)|^.*$'), "$1");
+                    if (cookie === '0' || cookie === '1') pref = cookie;
+                } catch (e) { }
+            }
+
+            if (pref === null) pref = '1';
+            setCookie(key, pref);
+            if (pref === '1') document.documentElement.classList.add('theme-dark');
+        })();
+    </script>
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/css/site.css" rel="stylesheet" />
+    <link href="assets/css/jquery.fileupload.css" rel="stylesheet" />
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .qnavi {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 150;
+            opacity: 0.3;
+        }
+
+            .qnavi:hover {
+                opacity: 1;
+            }
+
+        .hl {
+            color: black;
+        }
+
+        .upload-actions {
+            margin-bottom: 10px;
+        }
+
+            .upload-actions .btn,
+            .upload-actions .fileinput-button {
+                margin-right: 6px;
+                margin-bottom: 6px;
+            }
+
+        .paste-panel {
+            max-width: 720px;
+        }
+
+            .paste-panel .panel-body {
+                padding-bottom: 10px;
+            }
+
+        .paste-code-alert {
+            margin-bottom: 12px;
+        }
+
+            .paste-code-alert code {
+                overflow-wrap: anywhere;
+                white-space: normal;
+            }
+
+        .paste-code-actions {
+            margin-bottom: 0;
+        }
+
+        #pasteCodeText {
+            resize: vertical;
+        }
+
+        .loading-placeholder {
+            height: 720px;
+        }
+    </style>
+</head>
+<body x-data="{ mobileMenu: false, resourcesOpen: false, heroResourcesOpen: false, modalOpen: false, activeTab: 'formatos', openFaq: 1 }">
+    <header class="navbar navbar-inverse navbar-fixed-top">
+        <nav aria-label="Navegación principal">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" id="mobileNavToggle" aria-expanded="false" aria-controls="primaryNavigation" aria-label="Abrir menú">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="#homeView" id="navHome" class="navbar-brand" title="Editor de partidas online" aria-label="Editor de partidas online">
+                    <span class="brand-mark" aria-hidden="true"><span class="glyphicon glyphicon-floppy-disk"></span></span>
+                    <span class="brand-name">Editor de partidas <span>Online</span></span>
+                </a>
+            </div>
+            <div class="navbar-collapse collapse site-nav" id="primaryNavigation">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="index.html" id="navHomePage" title="Inicio" aria-current="page">Inicio</a></li>
+                    <li><a href="servicios.html" title="Servicios">Servicios</a></li>
+                    <li><a href="nosotros.html" title="Nosotros">Nosotros</a></li>
+                    <li><a href="blog.html" title="Blog">Blog</a></li>
+                    <li><a href="contacto.html" title="Contacto">Contacto</a></li>
+                    <li>
+                        <a href="#editorView" id="navEditors" title="Editores de partidas">Editor</a>
+                    </li>
+                    <li>
+                        <div class="relative">
+                            <button type="button" class="nav-action" @click="resourcesOpen = !resourcesOpen" :aria-expanded="resourcesOpen" aria-haspopup="true">
+                                Recursos <span aria-hidden="true">⌄</span>
+                            </button>
+                            <div x-cloak x-show="resourcesOpen" @click.outside="resourcesOpen = false" x-transition class="absolute right-0 z-30 mt-1 min-w-56 rounded-xl border border-slate-600 bg-slate-900 p-2 text-left shadow-xl">
+                                <a id="navFormats" href="#formatsView" title="Formatos compatibles" class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">Formatos compatibles</a>
+                                <a id="navRegister" href="#registerView" title="Registrarse" class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">Registrarse</a>
+                                <a id="navSoporte" href="#supportView" title="Soporte" class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">Soporte</a>
+                                <a id="navIniciarSesion" href="#loginView" title="Iniciar sesión" class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">Iniciar sesión</a>
+                                <a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" target="_blank" rel="noopener" href="https://translate.saveeditonline.com" title="Traductor de juegos">Traductor de juegos</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="nav-action nav-action-icon" href="#" id="darkToggle" title="Cambiar a modo claro" aria-label="Cambiar a modo claro" aria-pressed="true">
+                            <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">☀</span>
+                            <span class="sr-only">Cambiar tema oscuro</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+                    <div class="pixel-companion" aria-hidden="true"><span class="pixel-companion-shadow"></span><span class="pixel-companion-head"></span><span class="pixel-companion-body"></span><span class="pixel-companion-sword"></span></div>        </nav>
+    </header>    <div class="pixel-scenery" aria-hidden="true"><span class="pixel-stars"></span><span class="pixel-forest pixel-forest-back"></span><span class="pixel-forest pixel-forest-front"></span></div>
+    <main class="container body-content">
+
+<div id="welcomeBanner" class="alert alert-success" style="display:none; margin-top:15px;">
+    <span id="welcomeText"></span>
+    <button type="button" class="btn btn-default btn-xs pull-right" id="logoutBtn">Cerrar sesión</button>
+</div>
+
+<div id="homeView" class="pageview">
+
+<section class="jumbotron" itemscope itemtype="http://schema.org/Organization" aria-labelledby="hero-title">
+    <div class="relative z-10 max-w-4xl">
+        <p class="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-cyan-200">Save Editor Studio</p>
+        <h1 id="hero-title" itemprop="name">Edita tus partidas con confianza</h1>
+        <link itemprop="url" href="index.html" />
+        <div class="lead" itemprop="description">
+            <p>Una herramienta rápida y gratuita para personalizar partidas de RPG Maker, Ren'Py, Unity, Unreal Engine, Godot y juegos HTML.</p>
+            <p>Sube tu archivo, detectamos automáticamente el formato y modifica oro, objetos, estadísticas, variables o textos sin instalar nada.</p>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3">
+            <a href="#editorView" class="btn btn-primary btn-lg">Empezar a editar</a>
+            <button type="button" class="btn btn-default btn-lg" @click="modalOpen = true">Cómo funciona</button>
+            <div class="relative" @click.outside="heroResourcesOpen = false">
+                <button type="button" class="btn btn-default btn-lg" @click="heroResourcesOpen = !heroResourcesOpen" :aria-expanded="heroResourcesOpen" aria-haspopup="true">
+                    Recursos <span aria-hidden="true">⌄</span>
+                </button>
+                <div x-cloak x-show="heroResourcesOpen" x-transition class="absolute left-0 top-full z-20 mt-2 min-w-56 rounded-xl border border-slate-600 bg-slate-900 p-2 text-left shadow-2xl">
+                    <a href="#formatsView" class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">Formatos compatibles</a>
+                    <a href="#supportView" class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">Centro de soporte</a>
+                    <a href="#news" class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">Novedades</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <meta itemprop="logo" content="assets/image/rpgmaker-vxace.png" />
+</section>
+
+<section class="mb-8 grid gap-4 md:grid-cols-3" aria-label="Ventajas principales">
+    <article class="rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-lg">
+        <p class="mb-3 text-2xl" aria-hidden="true">⚡</p>
+        <h2 class="mb-2 text-lg font-bold text-white">Detección automática</h2>
+        <p class="m-0 text-slate-300">Reconocemos el motor y abrimos el editor adecuado para tu partida.</p>
+    </article>
+    <article class="rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-lg">
+        <p class="mb-3 text-2xl" aria-hidden="true">🔒</p>
+        <h2 class="mb-2 text-lg font-bold text-white">Privacidad primero</h2>
+        <p class="m-0 text-slate-300">Los archivos subidos se eliminan automáticamente después de 24 horas.</p>
+    </article>
+    <article class="rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-lg">
+        <p class="mb-3 text-2xl" aria-hidden="true">🧩</p>
+        <h2 class="mb-2 text-lg font-bold text-white">Muchos formatos</h2>
+        <p class="m-0 text-slate-300">Compatible con extensiones clásicas, archivos comprimidos, JSON y Base64.</p>
+    </article>
+</section>
+
+<section class="mb-8 rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-lg" aria-labelledby="quick-info-title">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 id="quick-info-title" class="m-0 text-2xl font-bold text-white">Antes de empezar</h2>
+        <div class="flex flex-wrap gap-2" role="tablist" aria-label="Información rápida">
+            <button type="button" role="tab" class="rounded-lg px-3 py-2 text-sm font-bold" :class="activeTab === 'formatos' ? 'bg-indigo-500 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'" :aria-selected="activeTab === 'formatos'" @click="activeTab = 'formatos'">Formatos</button>
+            <button type="button" role="tab" class="rounded-lg px-3 py-2 text-sm font-bold" :class="activeTab === 'pasos' ? 'bg-indigo-500 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'" :aria-selected="activeTab === 'pasos'" @click="activeTab = 'pasos'">Pasos</button>
+            <button type="button" role="tab" class="rounded-lg px-3 py-2 text-sm font-bold" :class="activeTab === 'seguridad' ? 'bg-indigo-500 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'" :aria-selected="activeTab === 'seguridad'" @click="activeTab = 'seguridad'">Seguridad</button>
+        </div>
+    </div>
+    <div x-show="activeTab === 'formatos'" role="tabpanel" class="text-slate-300">
+        <p class="m-0">Trabajamos con <span class="font-semibold text-cyan-200">.save, .sav, .rpgsave, .rvdata2, .sqlite, .json, .txt, .gz</span> y muchos formatos adicionales.</p>
+    </div>
+    <ol x-show="activeTab === 'pasos'" role="tabpanel" class="m-0 space-y-2 pl-5 text-slate-300">
+        <li>Sube una partida o pega sus datos.</li>
+        <li>Edita los valores disponibles.</li>
+        <li>Descarga una copia actualizada y conserva tu respaldo original.</li>
+    </ol>
+    <div x-show="activeTab === 'seguridad'" role="tabpanel" class="text-slate-300">
+        <p class="m-0">Haz siempre una copia de seguridad. No cierres el juego mientras reemplazas la partida editada.</p>
+    </div>
+</section>
+
+<section class="mb-8 rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-lg" aria-labelledby="faq-title">
+    <h2 id="faq-title" class="mb-4 text-2xl font-bold text-white">Preguntas frecuentes</h2>
+    <div class="divide-y divide-slate-700">
+        <article class="py-3">
+            <button type="button" class="flex w-full items-center justify-between gap-4 text-left font-bold text-white" @click="openFaq = openFaq === 1 ? 0 : 1" :aria-expanded="openFaq === 1">
+                ¿Se guardan mis archivos? <span aria-hidden="true" x-text="openFaq === 1 ? '−' : '+'"></span>
+            </button>
+            <p x-show="openFaq === 1" x-transition class="mb-0 mt-2 text-slate-300">Los datos enviados se eliminan automáticamente después de un día.</p>
+        </article>
+        <article class="py-3">
+            <button type="button" class="flex w-full items-center justify-between gap-4 text-left font-bold text-white" @click="openFaq = openFaq === 2 ? 0 : 2" :aria-expanded="openFaq === 2">
+                ¿Puedo pegar una partida en lugar de subirla? <span aria-hidden="true" x-text="openFaq === 2 ? '−' : '+'"></span>
+            </button>
+            <p x-show="openFaq === 2" x-transition class="mb-0 mt-2 text-slate-300">Sí. Usa la opción “Pegar código” cuando tengas texto Base64, JSON o datos serializados.</p>
+        </article>
+        <article class="py-3">
+            <button type="button" class="flex w-full items-center justify-between gap-4 text-left font-bold text-white" @click="openFaq = openFaq === 3 ? 0 : 3" :aria-expanded="openFaq === 3">
+                ¿Qué pasa si el formato no es compatible? <span aria-hidden="true" x-text="openFaq === 3 ? '−' : '+'"></span>
+            </button>
+            <p x-show="openFaq === 3" x-transition class="mb-0 mt-2 text-slate-300">Revisa la lista de formatos compatibles o contacta con soporte para solicitar ayuda.</p>
+        </article>
+    </div>
+</section>
+
+<div x-cloak x-show="modalOpen" x-transition class="fixed inset-0 z-[200] grid place-items-center bg-slate-950/80 p-4" role="dialog" aria-modal="true" aria-labelledby="how-it-works-title" @keydown.escape.window="modalOpen = false">
+    <div class="w-full max-w-lg rounded-2xl border border-slate-600 bg-slate-900 p-6 shadow-2xl" @click.stop>
+        <div class="flex items-start justify-between gap-4">
+            <h2 id="how-it-works-title" class="m-0 text-2xl font-bold text-white">Cómo funciona</h2>
+            <button type="button" class="rounded-lg px-3 py-1 text-2xl text-slate-300 hover:bg-slate-800 hover:text-white" aria-label="Cerrar ventana" @click="modalOpen = false">&times;</button>
+        </div>
+        <p class="mt-4 text-slate-300">La herramienta analiza tu archivo en el navegador y en el servidor, identifica los datos editables y prepara una interfaz específica para cada motor.</p>
+        <button type="button" class="btn btn-primary mt-4" @click="modalOpen = false">Entendido</button>
+    </div>
+</div>
+
+</div>
+
+<div id="editorView" class="pageview">
+<section class="editor-intro" aria-labelledby="editor-view-title">
+    <div class="editor-intro-content">
+        <p class="editor-kicker">Editor de partidas online</p>
+        <h1 id="editor-view-title">Edita tu partida de forma sencilla</h1>
+        <p class="editor-description">Sube un archivo de guardado o pega sus datos para detectar automáticamente el formato y abrir las herramientas disponibles.</p>
+        <ul class="editor-supported-formats" aria-label="Formatos y motores compatibles">
+            <li>RPG Maker VX Ace, MV y MZ</li>
+            <li>Ren'Py, Wolf RPG y juegos HTML</li>
+            <li>Archivos JSON, texto y formatos comprimidos</li>
+        </ul>
+    </div>
+</section>
+
+<section class="editor-upload-card" aria-labelledby="upload-title">
+    <div class="editor-upload-heading">
+        <div>
+            <p class="editor-kicker">Comienza ahora</p>
+            <h2 id="upload-title">Carga tu archivo de partida</h2>
+        </div>
+        <span class="editor-upload-badge" aria-hidden="true">✓ Seguro y rápido</span>
+    </div>
+<div class="upload-actions">
+    <span class="btn btn-success fileinput-button" title="Subir archivo">
+        <i class="glyphicon glyphicon-plus"></i>
+        <span class="btn-text-upper">Subir archivo</span>
+        <input id="fileupload" type="file" name="file" aria-label="Subir archivo de partida">
+    </span>
+    <span class="upload-actions-separator">o</span>
+    <button id="togglePasteCode" type="button" class="btn btn-default btn-text-upper">Pegar código</button>
+</div>
+<div id="pasteCodePanel" class="panel panel-default paste-panel" style="display:none;">
+    <div class="panel-body">
+<div class="alert alert-info paste-code-alert" role="alert">
+    <b>Pegar código</b> is for data that can be safely pasted as normal text, such as
+    <code class="notranslate" translate="no">%7B%22kind%22%3A%22save%22%2C%22data%22</code>,
+    <code class="notranslate" translate="no">1uy+UfyS+cNvDN5/3Lh2h1TqpmMIMZgEAAAAA=</code>,
+    o <code class="notranslate" translate="no">BBF02F165FCD2FC1793F0FBE7E25B74FAB7FF0F</code>.
+    Si tus datos parecen binarios o texto ilegible, por ejemplo
+    <code class="notranslate" translate="no">T&Yacute;n&Oacute;0&hellip;/0&Ouml;V&hellip;tpk&sup1;&ouml;i&ccedil;-&ntilde;&hellip;</code>,
+    usa <b class="btn-text-upper">Subir archivo</b> en su lugar.
+</div>
+        <div class="form-group">
+            <label for="pasteCodeText">Pega tu código <span class="notranslate" translate="no">Base64</span> o de partida</label>
+            <textarea id="pasteCodeText" class="form-control" rows="8" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Pega aquí tu código Base64 o de partida"></textarea>
+            <div class="help-block">El texto pegado se subirá como <b class="notranslate" translate="no">savegame.txt</b>.</div>
+        </div>
+        <div class="form-group paste-code-actions">
+            <button id="submitPasteCode" type="button" class="btn btn-primary btn-text-upper">Enviar</button>
+            <button id="cancelPasteCode" type="button" class="btn btn-link">Cancelar</button>
+        </div>
+    </div>
+</div>
+<div class="hint42"><i>Suelta los archivos aquí para subirlos</i></div>
+<div id="progress" class="progress">
+    <div class="progress-bar progress-bar-success"></div>
+</div>
+
+<div class="translation-source" aria-hidden="true">
+    <span id="uiLoading">Cargando...</span>
+    <span id="uiPreparingDownload">Preparando la descarga, espera un momento...</span>
+    <span id="uiLoadError">Lo sentimos, ocurrió un error: {0} {1}</span>
+    <span id="uiMaintenanceUpdate">Espera un momento. El sitio se está actualizando. Normalmente tarda menos de un minuto. Inténtalo de nuevo en un momento.</span>
+    <span id="uiUploadOneFile">Debes subir un solo archivo de partida.</span>
+    <span id="uiFileTooLarge">El archivo es demasiado grande. El tamaño máximo es de {0} MB.</span>
+    <span id="uiUploadFailedLimit">La subida falló: la solicitud superó el límite del servidor ({0} MB).</span>
+    <span id="uiUploadFailedBadRequest">La subida falló (400). El navegador no pudo enviar correctamente el archivo seleccionado. Muévelo a una carpeta local de confianza, como Descargas o Documentos, e inténtalo de nuevo.</span>
+    <span id="uiUploadFailedStatus">La subida falló ({0}{1}). El archivo puede no ser válido o se pudo superar el límite de tamaño del servidor.</span>
+    <span id="uiUploadFailedGeneric">La subida falló. El archivo puede no ser válido, la conexión pudo interrumpirse o se pudo superar el límite de tamaño del servidor.</span>
+    <span id="uiFileReadFailed">El navegador no pudo leer este archivo desde su carpeta actual. Muévelo a una carpeta local de confianza, como Descargas o Documentos, e inténtalo de nuevo.</span>
+    <span id="uiUploadCheckFailedStatus">La comprobación de subida falló ({0}{1}). Inténtalo de nuevo.</span>
+    <span id="uiUploadCheckFailedGeneric">La comprobación de subida falló. La conexión pudo interrumpirse.</span>
+    <span id="uiUnexpectedUploadCheck">La respuesta de comprobación de subida no es válida.</span>
+    <span id="uiPasteCodeFirst">Primero pega tu código Base64 o de partida.</span>
+    <span id="uiPasteCodeUnsupported">Pegar código no es compatible con este navegador. Usa Subir archivo.</span>
+</div>
+
+<div id="downloadHint" class="alert alert-info download-hint" role="status" aria-live="polite" style="display:none;"></div>
+
+<div id="editorForm" role="region" aria-live="polite">
+</div>
+</section>
+
+</div>
+
+<div id="news" class="pageview">
+    <div class="panel panel-default news" id="editor-3014" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3014" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.*</span> (<span class="notranslate" translate="no">Java, juegos HTML y archivos empaquetados</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">4/14/2026</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/java.png" alt="Icono de Java, juegos HTML y archivos empaquetados" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>Se añadió compatibilidad ampliada con juegos Java, variables de texto en muchos juegos, mejor gestión de juegos HTML y soporte más inteligente para archivos empaquetados.</p>
+                    <p>Funciones: variables de texto y numéricas, datos serializados de Java, partidas HTML y archivos empaquetados.</p>
+                    <p>Patrocinado por: Ohkwari Olton, Mastertool, kittenMG!, Peter Trzensiok, Spirit Shell y otros 4276 colaboradores.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3013" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3013" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.rsv</span> (<span class="notranslate" translate="no">Rags Player 2.4</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">3/24/2018</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/Rags.png" alt="Rags Player 2.4 icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>Incluye un editor de partidas <span class="notranslate" translate="no">Unity3D</span> mejorado.</p>
+                    <p>Funciones: variables como dinero, objetos y estadísticas.</p>
+                    <p>Patrocinado por: Ohkwari Olton, Mastertool, kittenMG!, Peter Trzensiok, Spirit Shell y otros 965 colaboradores.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3012" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3012" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.sav</span> (<span class="notranslate" translate="no">Wolf RPG Editor</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">1/20/2018</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/wolf.png" alt="Wolf RPG Editor icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>Las partidas no incluyen los nombres de las variables. Identifícalas cambiando un valor en el juego y comparando la partida.</p>
+                    <p>Funciones: variables de texto y numéricas como dinero, objetos y estadísticas.</p>
+                    <p>Patrocinado por: Ohkwari Olton, Mastertool, kittenMG!, Peter Trzensiok, Spirit Shell y otros 746 colaboradores.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3011" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3011" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.lsd</span> (<span class="notranslate" translate="no">RPG Maker 2000/2003</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">12/22/2017</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/rpg2003.png" alt="RPG Maker 2000/2003 icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>Es un motor antiguo, pero muchos juegos excelentes creados con él siguen siendo populares.</p>
+                    <p>Funciones: oro, objetos y estadísticas.</p>
+                    <p>Patrocinado por: Ohkwari Olton, kittenMG!, Mastertool, Peter Trzensiok, Spirit Shell y otros 676 colaboradores.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3010" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3010" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.sav</span> (juegos de <span class="notranslate" translate="no">Unreal Engine</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">10/16/2017</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/ue.png" alt="Icono de Unreal Engine" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>En la mayoría de los juegos, las partidas se guardan en <code class="notranslate" translate="no">%LocalAppData%\&lt;NombreDelJuego&gt;\Saved\SaveGames</code>.</p>
+                    <p>Funciones: variables <span class="notranslate" translate="no">string, int, long, float, double, bool</span> como dinero, objetos y estadísticas.</p>
+                    <p>Compatibilidad del motor: <span class="notranslate" translate="no">UE4.x&ndash;UE5.7 (.sav / GVAS)</span>.</p>
+                    <p>Patrocinado por: Ohkwari Olton, kittenMG!, Mastertool, Peter Trzensiok, Spirit Shell y otros 396 colaboradores.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3009" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3009" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.dat, .save, .es3, .*</span> (juegos de <span class="notranslate" translate="no">Unity3D/.NET</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">9/14/2017</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/unity.png" alt="Icono de Unity" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>Compatible con muchos juegos populares de <span class="notranslate" translate="no">Unity</span>.</p>
+                    <p>Las partidas normalmente se guardan aquí: <code class="notranslate" translate="no">%AppData%\LocalLow\&lt;NombreDeLaEmpresa&gt;\&lt;NombreDelProducto&gt;</code>.</p>
+                    <p>También pueden estar guardadas en el registro, en <code class="notranslate" translate="no">HKCU\Software\&lt;NombreDeLaEmpresa&gt;\&lt;NombreDelProducto&gt;</code>.</p>
+                    <p>Funciones: dinero, objetos, estadísticas y mucho más.</p>
+                    <p>Patrocinado por: Ohkwari Olton, kittenMG!, Mastertool, Peter Trzensiok, Spirit Shell y otros 254 colaboradores.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3008" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3008" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.sol</span> editor de partidas (<span class="notranslate" translate="no">Adobe Flash</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">7/10/2017</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/flash.png" alt="Adobe Flash icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p><span class="notranslate" translate="no">Flash Player</span> guarda los objetos compartidos locales aquí: <code class="notranslate" translate="no">%AppData%\Roaming\Macromedia\Flash Player\#SharedObjects</code>.</p>
+                    <p>Se recomienda cerrar el juego antes de reemplazar la partida.</p>
+                    <p>Funciones: variables como dinero, objetos y estadísticas. cadenas, números y valores booleanos.</p>
+                    <p>Patrocinado por: Ohkwari Olton, kittenMG!, Mastertool y otros 147 colaboradores. ¡Gracias por tu apoyo!</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3007" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3007" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.sav</span> editor de partidas (<span class="notranslate" translate="no">The Witcher 3</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">6/1/2017</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/tw3.png" alt="The Witcher 3 icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>Un enorme RPG con una gran cantidad de contenido de alta calidad.</p>
+                    <p>Funciones: variables como dinero y objetos, además de una colección de cartas de Gwent que muestra cuáles faltan.</p>
+                    <p>Patrocinado por: Ohkwari Olton, kittenMG!, Mastertool y otros 97 colaboradores. ¡Gracias por tu apoyo!</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3006" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3006" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.rxdata</span> editor de partidas (<span class="notranslate" translate="no">RPG Maker XP</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">5/16/2017</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/xp.png" alt="RPG Maker XP icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>Un motor antiguo pero querido, con muchos juegos de gran calidad que todavía se juegan hoy.</p>
+                    <p>Funciones: oro, objetos, armas, armaduras y variables.</p>
+                    <p>Patrocinado por: Ohkwari Olton, kittenMG!, y otros 82 colaboradores. ¡Gracias por tu apoyo!</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3005" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3005" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.rvdata</span> editor de partidas (<span class="notranslate" translate="no">RPG Maker VX</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">5/15/2017</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/vx.png" alt="RPG Maker VX icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>También se admite la versión anterior de <span class="notranslate" translate="no">VX Ace</span>.</p>
+                    <p>Funciones: oro, objetos, armas, armaduras y variables.</p>
+                    <p>Patrocinado por: Ohkwari Olton, kittenMG!, y otros 80 colaboradores. ¡Gracias por tu apoyo!</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3003" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3003" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.save</span> editor de partidas (<span class="notranslate" translate="no">Ren&#39;Py</span>
+            </h2>
+            <div class="time" itemprop="dateCreated">1/21/2017</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/rp_128x128.png" alt="Ren&#39;Py icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>El editor de partidas (<span class="notranslate" translate="no">Ren&#39;Py</span> puede analizar las partidas, detectar variables y permitirte cambiarlas.</p>
+                    <p>Consejo: ten cuidado &mdash; edita solo valores que reconozcas, como dinero, oro o créditos.</p>
+                    <p>Funciones: variables como dinero, objetos y estadísticas.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3002" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3002" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.rpgsave</span> editor de partidas (<span class="notranslate" translate="no">RPG Maker MV</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">11/26/2016</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/rpgmaker-mv.png" alt="RPG Maker MV icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p><span class="notranslate" translate="no">RPG Maker MV</span> es una versión popular de la serie y se han creado muchos juegos con ella.</p>
+                    <p>Las partidas suelen tener la extensión <span class="notranslate" translate="no">.rpgsave</span>, por ejemplo <span class="notranslate" translate="no">file3.rpgsave</span>.</p>
+                    <p>Funciones: oro, parámetros, objetos, armas, armaduras y variables.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+    <div class="panel panel-default news" id="editor-3001" itemscope itemtype="http://schema.org/CreativeWork">
+        <link itemprop="url" href="#editor-3001" />
+        <div class="panel-heading">
+            <h2 class="panel-title" itemprop="name">
+                <span class="notranslate" translate="no">.rvdata2</span> editor de partidas (<span class="notranslate" translate="no">RPG Maker VX Ace</span>)
+            </h2>
+            <div class="time" itemprop="dateCreated">11/14/2016</div>
+        </div>
+        <div class="panel-body">
+            <div class="media">
+                <div class="media-left col-md-1">
+                    <img itemprop="image" width="64" height="64" class="media-object" src="assets/image/rpgmaker-vxace.png" alt="RPG Maker VX Ace icon" />
+                </div>
+                <div class="media-body col-md-9" itemprop="description">
+                    <p>Una herramienta que permite editar el contenido de una partida.</p>
+                    <p>Las partidas normalmente tienen nombres como <span class="notranslate" translate="no">Save5.rvdata2</span>.</p>
+                    <p>Funciones: oro, parámetros, objetos, armas, armaduras y variables.</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" itemprop="author">Editor de partidas</div>
+    </div>
+
+</div>
+
+<div id="supportView" class="panel panel-default paste-panel pageview" style="display:none;">
+    <div class="panel-heading">
+        <h2 class="panel-title">Soporte</h2>
+    </div>
+    <div class="panel-body">
+        <form id="supportForm">
+            <div class="form-group">
+                <label for="supportName">Nombre</label>
+                <input id="supportName" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="supportEmail">Correo electrónico</label>
+                <input id="supportEmail" type="email" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="supportMessage">Consulta / mensaje</label>
+                <textarea id="supportMessage" class="form-control" rows="6"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-text-upper">Enviar</button>
+            <span id="supportResult" class="help-block"></span>
+        </form>
+    </div>
+</div>
+
+<div id="loginView" class="panel panel-default paste-panel pageview" style="display:none;">
+    <div class="panel-heading">
+        <h2 class="panel-title">Iniciar sesión</h2>
+    </div>
+    <div class="panel-body">
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginUser">Usuario o correo electrónico</label>
+                <input id="loginUser" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Contraseña</label>
+                <input id="loginPassword" type="password" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-text-upper">Iniciar sesión</button>
+            <span id="loginResult" class="help-block"></span>
+        </form>
+    </div>
+</div>
+
+<div id="registerView" class="panel panel-default paste-panel pageview" style="display:none;">
+    <div class="panel-heading">
+        <h2 class="panel-title">Registrarse</h2>
+    </div>
+    <div class="panel-body">
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="regFirstName">Nombre</label>
+                <input id="regFirstName" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="regLastName">Apellidos</label>
+                <input id="regLastName" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Correo electrónico</label>
+                <input id="regEmail" type="email" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Contraseña</label>
+                <input id="regPassword" type="password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="regConfirm">Confirmar contraseña</label>
+                <input id="regConfirm" type="password" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-text-upper">Crear cuenta</button>
+            <span id="registerResult" class="help-block"></span>
+        </form>
+    </div>
+</div>
+
+<div id="formatsView" class="pageview" style="display:none;">
+    <h2>Formatos compatibles</h2>
+    <p class="lead">Estos son los formatos de partidas que puedes abrir y editar. El límite de subida es común para todos los formatos: <strong>25 MB por archivo</strong>. El tamaño real de una partida depende del juego y de los datos guardados.</p>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Extensión</th>
+                    <th>Motor / juego</th>
+                    <th>Límite de subida</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="notranslate" translate="no">.save</span></td>
+                    <td><span class="notranslate" translate="no">Ren&#39;Py</span>, Unity, juegos HTML</td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.sav</span></td>
+                    <td><span class="notranslate" translate="no">Unreal Engine</span> (UE4.x&ndash;UE5.7 / GVAS), The Witcher 3, Wolf RPG Editor</td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.rmmzsave</span></td>
+                    <td><span class="notranslate" translate="no">RPG Maker MZ</span></td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.rpgsave</span></td>
+                    <td><span class="notranslate" translate="no">RPG Maker MV</span></td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.rvdata2</span></td>
+                    <td><span class="notranslate" translate="no">RPG Maker VX Ace</span></td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.rvdata</span></td>
+                    <td><span class="notranslate" translate="no">RPG Maker VX</span></td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.rxdata</span></td>
+                    <td><span class="notranslate" translate="no">RPG Maker XP</span></td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.lsd</span></td>
+                    <td><span class="notranslate" translate="no">RPG Maker 2000/2003</span></td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.rsv</span></td>
+                    <td><span class="notranslate" translate="no">Rags Player 2.4</span></td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.sqlite</span></td>
+                    <td>Partidas basadas en SQLite</td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.sol</span></td>
+                    <td><span class="notranslate" translate="no">Adobe Flash</span> (objetos compartidos locales)</td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.gz</span></td>
+                    <td>Partidas comprimidas con GZIP</td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.es3</span></td>
+                    <td><span class="notranslate" translate="no">Easy Save 3</span> (<span class="notranslate" translate="no">Unity</span>)</td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.dat</span></td>
+                    <td><span class="notranslate" translate="no">Unity3D/.NET</span> juegos</td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.json</span>, <span class="notranslate" translate="no">.txt</span></td>
+                    <td>Partidas JSON, texto y Base64 (también utilizables con <b class="btn-text-upper">Pegar código</b>)</td>
+                    <td>25 MB por archivo</td>
+                </tr>
+                <tr>
+                    <td><span class="notranslate" translate="no">.*</span></td>
+                    <td>Datos serializados de Java, partidas HTML y archivos empaquetados</td>
+                    <td>25 MB por archivo</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="btn-group-vertical qnavi" role="group" aria-label="Page navigation">
+    <button type="button" class="btn btn-default" onclick="scrollToTop()" aria-label="Subir al principio" title="Subir al principio">
+        <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+        <span class="sr-only">Subir al principio</span>
+    </button>
+    <button type="button" class="btn btn-default" onclick="scrollToBottom()" aria-label="Bajar al final" title="Bajar al final">
+        <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+        <span class="sr-only">Bajar al final</span>
+    </button>
+</div>
+
+        <hr />
+        <footer>
+            <div class="footer-hint">
+                <i>Todos los datos enviados o subidos se eliminan después de 1 día.</i> <a href="mailto:support@saveeditonline.com">correo de soporte</a>
+            </div>
+            <p>&copy; 2026 - Online Save Editor</p>
+        </footer>
+    </main>
+
+    <script src="assets/js/support-requests.js"></script>
+    <script src="assets/js/jquery.ui.widget.js"></script>
+    <script src="assets/js/jquery.fileupload.js"></script>
+    <script src="assets/js/jquery.fileupload-process.js"></script>
+    <script src="assets/js/jquery.iframe-transport.js"></script>
+
+    <script type="text/javascript">
+        function getScrollEl() {
+            return document.scrollingElement || document.documentElement || document.body;
+        }
+
+        function scrollWindowTo(top) {
+            var targetTop = typeof top === 'number' ? top : 0;
+            try {
+                if (window.scrollTo) {
+                    window.scrollTo(0, targetTop);
+                    return;
+                }
+            } catch (ex) {
+            }
+
+            var el = getScrollEl();
+            if (el) {
+                el.scrollTop = targetTop;
+            }
+        }
+
+        function scrollToTop() {
+            scrollWindowTo(0);
+        }
+
+        function scrollToBottom() {
+            var body = document.body || { scrollHeight: 0 };
+            var docEl = document.documentElement || { scrollHeight: 0 };
+            scrollWindowTo(Math.max(body.scrollHeight, docEl.scrollHeight));
+        }
+
+        function JSONGet(selector) {
+            return JSON.parse($(selector).val());
+        }
+
+        function JSONSet(selector, data) {
+            $(selector).val(JSON.stringify(data));
+        }
+
+        function Normalize(val, min, max) {
+            val = val.replace(/,/g, ".");
+            val = Number(val);
+            if (isNaN(val)) return min;
+            if (val < min) return min;
+            if (val > max) return max;
+            return val;
+        }
+
+        function NPrompt(msg, val, min, max) {
+            var ud = prompt(msg, val);
+            if (ud === null) {
+                return val;
+            }
+            return Normalize(ud, min, max);
+        }
+
+        function uiText(id, fallback) {
+            var el = document.getElementById(id);
+            if (!el) {
+                return fallback || '';
+            }
+
+            return el.textContent || el.innerText || fallback || '';
+        }
+
+        function uiTextFormat(id, fallback) {
+            var text = uiText(id, fallback);
+            for (var i = 2; i < arguments.length; i++) {
+                text = text.replace(new RegExp('\\{' + (i - 2) + '\\}', 'g'), arguments[i]);
+            }
+            return text;
+        }
+
+        function htmlEncode(value) {
+            return $('<div/>').text(value).html();
+        }
+
+        function getLoadingHtml() {
+            return '<div class="loading-placeholder"><b>' + htmlEncode(uiText('uiLoading', 'Cargando...')) + '</b></div>';
+        }
+
+        var downloadHintTimer = null;
+
+        function hideDownloadHint() {
+            if (downloadHintTimer) {
+                window.clearTimeout(downloadHintTimer);
+                downloadHintTimer = null;
+            }
+
+            $('#downloadHint').hide().text('');
+        }
+
+        function showDownloadHint() {
+            var t = $('#downloadHint');
+
+            if (downloadHintTimer) {
+                window.clearTimeout(downloadHintTimer);
+                downloadHintTimer = null;
+            }
+
+            t.text(uiText('uiPreparingDownload', 'Preparando la descarga, espera un momento...')).show();
+
+            downloadHintTimer = window.setTimeout(function() {
+                t.hide().text('');
+                downloadHintTimer = null;
+            }, 5000);
+        }
+
+        var readinessCheckUrl = '/Ready';
+
+        function isMaintenanceStatus(xhr) {
+            var status = xhr ? xhr.status : 0;
+            return status === 502 || status === 503 || status === 504;
+        }
+
+        function showMaintenanceAlert() {
+            alert(uiText(
+                'uiMaintenanceUpdate',
+                'Espera un momento. El sitio se está actualizando. Normalmente tarda menos de un minuto. Inténtalo de nuevo en un momento.'));
+        }
+
+        function RunWhenServerReady(onReady, onBlocked) {
+            $.ajax({
+                url: readinessCheckUrl,
+                type: 'GET',
+                dataType: 'text',
+                cache: false
+            })
+            .done(function() {
+                onReady();
+            })
+            .fail(function(xhr) {
+                if (isMaintenanceStatus(xhr)) {
+                    if (onBlocked) {
+                        onBlocked();
+                    }
+                    showMaintenanceAlert();
+                    return;
+                }
+
+                onReady();
+            });
+
+            return false;
+        }
+
+        function showDownloadUi() {
+            showDownloadHint();
+            $('#editorForm').hide();
+            $('#news').show();
+            $('.hint42').show();
+            $('html, body').animate({ scrollTop: 0 }, 100);
+        }
+
+        function OnDownload(form) {
+            if (!form) {
+                showDownloadUi();
+                return true;
+            }
+
+            if ($.fn.valid && !$(form).valid()) {
+                return false;
+            }
+
+            if (form._saveEditorReadinessPending) {
+                return false;
+            }
+
+            form._saveEditorReadinessPending = true;
+
+            return RunWhenServerReady(function() {
+                form._saveEditorReadinessPending = false;
+                showDownloadUi();
+                form.submit();
+            }, function() {
+                form._saveEditorReadinessPending = false;
+            });
+        }
+
+        function ApplyFeature(url) {
+            RunWhenServerReady(function() {
+                hideDownloadHint();
+                var t = $('#editorForm');
+                t.html(getLoadingHtml());
+                t.load(url, function(response, status, xhr) {
+                    if (status == "error") {
+                        t.html(uiTextFormat('uiLoadError', 'Lo sentimos, ocurrió un error: {0} {1}', xhr.status, xhr.statusText));
+                        return;
+                    }
+
+                    bindUploadDropExclusions(t);
+                    bindNativeFileInputDrop(t);
+                });
+            });
+        }
+
+        function AltView(url) {
+            ApplyFeature(url);
+        }
+
+        function hasFiles(evt) {
+            var e = evt.originalEvent || evt;
+            var dt = e.dataTransfer;
+            return !!(dt && dt.types && $.inArray('Files', dt.types) !== -1);
+        }
+
+        function bindNativeFileInputDrop($root) {
+            $root.find('input[type=file]').addBack('input[type=file]')
+            .off('.nativeFileInputDrop')
+            .on('dragenter.nativeFileInputDrop dragover.nativeFileInputDrop drop.nativeFileInputDrop', function(e) {
+                if (!hasFiles(e)) {
+                    return;
+                }
+
+                e.stopPropagation();
+            });
+        }
+
+        function bindUploadDropExclusions($root) {
+            var selector =
+                'input:not([type=file]), textarea, [contenteditable=true]';
+
+            $root.find(selector).addBack(selector)
+            .off('.uploadDropExclude')
+            .on('dragenter.uploadDropExclude dragover.uploadDropExclude drop.uploadDropExclude', function(e) {
+                if (!hasFiles(e)) {
+                    return;
+                }
+
+                e.stopPropagation();
+            });
+        }
+
+        function setUploadProgress(progress) {
+            $('#progress .progress-bar').css('width', progress + '%');
+        }
+
+        function showPasteCodePanel() {
+            $('#pasteCodePanel').show();
+            bindUploadDropExclusions($('#pasteCodePanel'));
+            $('#pasteCodeText').focus();
+        }
+
+        function hidePasteCodePanel(clearText) {
+            if (clearText) {
+                $('#pasteCodeText').val('');
+            }
+
+            $('#pasteCodePanel').hide();
+        }
+
+        function setPasteCodeBusy(isBusy) {
+            $('#togglePasteCode').prop('disabled', isBusy);
+            $('#submitPasteCode').prop('disabled', isBusy);
+            $('#cancelPasteCode').prop('disabled', isBusy);
+        }
+
+        function createTextBlob(text) {
+            try {
+                return new Blob([text], { type: 'text/plain;charset=utf-8' });
+            } catch (ex) {
+                var BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
+                if (!BlobBuilder) {
+                    return null;
+                }
+
+                var bb = new BlobBuilder();
+                bb.append(text);
+                return bb.getBlob('text/plain;charset=utf-8');
+            }
+        }
+
+        function getBlobSlice(blob) {
+            if (!blob) {
+                return null;
+            }
+
+            return blob.slice || blob.webkitSlice || blob.mozSlice || null;
+        }
+
+        function probeFileReadable(file, onReadable, onUnreadable) {
+            var FileReaderCtor = window.FileReader;
+            var sliceFn = getBlobSlice(file);
+
+            if (!FileReaderCtor || !file || !sliceFn) {
+                onReadable();
+                return;
+            }
+
+            if (typeof file.size === 'number' && file.size === 0) {
+                onReadable();
+                return;
+            }
+
+            var completed = false;
+            var timeoutId = null;
+
+            function complete(isReadable) {
+                if (completed) {
+                    return;
+                }
+
+                completed = true;
+
+                if (timeoutId) {
+                    window.clearTimeout(timeoutId);
+                    timeoutId = null;
+                }
+
+                if (isReadable) {
+                    onReadable();
+                    return;
+                }
+
+                onUnreadable();
+            }
+
+            try {
+                var end = typeof file.size === 'number' ? Math.min(file.size, 4096) : 4096;
+                var sample = sliceFn.call(file, 0, end);
+                var reader = new FileReaderCtor();
+
+                reader.onload = function() {
+                    complete(true);
+                };
+
+                reader.onerror = function() {
+                    complete(false);
+                };
+
+                reader.onabort = function() {
+                    complete(false);
+                };
+
+                timeoutId = window.setTimeout(function() {
+                    try {
+                        if (reader.readyState === 1 && reader.abort) {
+                            reader.abort();
+                        }
+                    } catch (exAbort) {
+                    }
+
+                    complete(false);
+                }, 8000);
+
+                if (reader.readAsArrayBuffer) {
+                    reader.readAsArrayBuffer(sample);
+                    return;
+                }
+
+                if (reader.readAsBinaryString) {
+                    reader.readAsBinaryString(sample);
+                    return;
+                }
+
+                complete(true);
+            } catch (ex) {
+                complete(false);
+            }
+        }
+
+        function handleFileReadFail() {
+            alert(uiText('uiFileReadFailed', 'El navegador no pudo leer este archivo desde su carpeta actual. Muévelo a una carpeta local de confianza, como Descargas o Documentos, e inténtalo de nuevo.'));
+        }
+
+        function validateFiles(files) {
+            var bS = 0;
+
+            if (!files || !files.length) {
+                alert(uiText('uiUploadOneFile', 'Debes subir un solo archivo de partida.'));
+                return false;
+            }
+
+            if (files.length > 1) {
+                alert(uiText('uiUploadOneFile', 'Debes subir un solo archivo de partida.'));
+                return false;
+            }
+
+            for (var i = 0; i < files.length; i++) {
+                bS += files[i].size;
+            }
+
+            if (bS > uploadSizeLimit) {
+                alert(uiTextFormat('uiFileTooLarge', 'El archivo es demasiado grande. El tamaño máximo es de {0} MB.', Math.round(uploadSizeLimit / 1048576)));
+                return false;
+            }
+
+            return true;
+        }
+
+        function handleUploadDone(result, editUrl) {
+            hideDownloadHint();
+            hidePasteCodePanel(false);
+
+            var id = result.id;
+            var fileNombre = result && typeof result.f !== 'undefined' && result.f !== null ? result.f : '';
+
+            var t = $('#editorForm');
+            t.html(getLoadingHtml());
+
+            t.load(editUrl + '?id=' + encodeURIComponent(id) + '&fileNombre=' + encodeURIComponent(fileNombre), function(response, status, xhr) {
+                if (status == "error") {
+                    t.html("Sorry but there was an error: " + xhr.status + " " + xhr.statusText);
+                    return;
+                }
+
+                bindUploadDropExclusions(t);
+                bindNativeFileInputDrop(t);
+            });
+
+            $('#news').hide();
+            $('.hint42').hide();
+            $('#editorForm').show();
+            setUploadProgress(0);
+        }
+
+        function handleUploadFail(jqXHR) {
+            var status = jqXHR ? jqXHR.status : 0;
+            var statusText = jqXHR && jqXHR.statusText ? jqXHR.statusText : '';
+            var limitMb = Math.round(uploadSizeLimit / 1048576);
+
+            if (status === 413) {
+                alert(uiTextFormat('uiUploadFailedLimit', 'La subida falló: la solicitud superó el límite del servidor ({0} MB).', limitMb));
+                return;
+            }
+
+            if (status === 400) {
+                alert(uiText('uiUploadFailedBadRequest', 'La subida falló (400). El navegador no pudo enviar correctamente el archivo seleccionado. Muévelo a una carpeta local de confianza, como Descargas o Documentos, e inténtalo de nuevo.'));
+                return;
+            }
+
+            if (status) {
+                alert(uiTextFormat('uiUploadFailedStatus', 'La subida falló ({0}{1}). El archivo puede no ser válido o se pudo superar el límite de tamaño del servidor.', status, statusText ? ' ' + statusText : ''));
+                return;
+            }
+
+            alert(uiText('uiUploadFailedGeneric', 'La subida falló. El archivo puede no ser válido, la conexión pudo interrumpirse o se pudo superar el límite de tamaño del servidor.'));
+        }
+
+        function handleUploadCheckFail(jqXHR) {
+            var status = jqXHR ? jqXHR.status : 0;
+            var statusText = jqXHR && jqXHR.statusText ? jqXHR.statusText : '';
+
+            if (status) {
+                alert(uiTextFormat('uiUploadCheckFailedStatus', 'La comprobación de subida falló ({0}{1}). Inténtalo de nuevo.', status, statusText ? ' ' + statusText : ''));
+                return;
+            }
+
+            alert(uiText('uiUploadCheckFailedGeneric', 'La comprobación de subida falló. La conexión pudo interrumpirse.'));
+        }
+
+        function hasUploadCheckPipelineResult(result) {
+            return !!(result && typeof result.id !== 'undefined' && result.id !== null);
+        }
+
+        function isReadyForFileResult(result) {
+            return !!(result && result.readyForFile === true);
+        }
+
+        function runUploadCheck(checkUrl, onReadyForFile, onPipelineResult, onFail, onUnexpected) {
+            $.ajax({
+                url: checkUrl,
+                type: 'POST',
+                dataType: 'json',
+                cache: false
+            })
+            .done(function(result) {
+                if (hasUploadCheckPipelineResult(result)) {
+                    if (onPipelineResult) {
+                        onPipelineResult(result);
+                    }
+                    return;
+                }
+
+                if (isReadyForFileResult(result)) {
+                    if (onReadyForFile) {
+                        onReadyForFile(result);
+                    }
+                    return;
+                }
+
+                if (onUnexpected) {
+                    onUnexpected(result);
+                    return;
+                }
+
+                alert(uiText('uiUnexpectedUploadCheck', 'La respuesta de comprobación de subida no es válida.'));
+            })
+            .fail(function(jqXHR) {
+                if (onFail) {
+                    onFail(jqXHR);
+                    return;
+                }
+
+                handleUploadCheckFail(jqXHR);
+            });
+        }
+
+        function submitPastedCode(checkUrl, uploadUrl, editUrl) {
+            var pastedText = $('#pasteCodeText').val();
+
+            if (!pastedText || !$.trim(pastedText)) {
+                alert(uiText('uiPasteCodeFirst', 'Primero pega tu código Base64 o de partida.'));
+                $('#pasteCodeText').focus();
+                return;
+            }
+
+            setPasteCodeBusy(true);
+            setUploadProgress(0);
+
+            runUploadCheck(
+                checkUrl,
+                function() {
+                    if (!window.FormData) {
+                        alert(uiText('uiPasteCodeUnsupported', 'Pegar código no es compatible con este navegador. Usa Subir archivo.'));
+                        showPasteCodePanel();
+                        setPasteCodeBusy(false);
+                        return;
+                    }
+
+                    var blob = createTextBlob(pastedText);
+                    if (!blob) {
+                        alert(uiText('uiPasteCodeUnsupported', 'Pegar código no es compatible con este navegador. Usa Subir archivo.'));
+                        showPasteCodePanel();
+                        setPasteCodeBusy(false);
+                        return;
+                    }
+
+                    if (!validateFiles([blob])) {
+                        showPasteCodePanel();
+                        setPasteCodeBusy(false);
+                        return;
+                    }
+
+                    hidePasteCodePanel(false);
+
+                    var formData = new FormData();
+                    formData.append('file', blob, 'savegame.txt');
+
+                    $.ajax({
+                        url: uploadUrl,
+                        type: 'POST',
+                        data: formData,
+                        dataType: 'json',
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        xhr: function() {
+                            var xhr = $.ajaxSettings.xhr();
+
+                            if (xhr && xhr.upload && xhr.upload.addEventListener) {
+                                xhr.upload.addEventListener('progress', function(evt) {
+                                    if (evt.lengthComputable) {
+                                        setUploadProgress(parseInt(evt.loaded / evt.total * 100, 10));
+                                    }
+                                }, false);
+                            }
+
+                            return xhr;
+                        }
+                    })
+                    .done(function(result) {
+                        hidePasteCodePanel(true);
+                        handleUploadDone(result, editUrl);
+                    })
+                    .fail(function(jqXHR) {
+                        handleUploadFail(jqXHR);
+                        showPasteCodePanel();
+                    })
+                    .always(function() {
+                        setPasteCodeBusy(false);
+                    });
+                },
+                function(result) {
+                    hidePasteCodePanel(true);
+                    handleUploadDone(result, editUrl);
+                    setPasteCodeBusy(false);
+                },
+                function(jqXHR) {
+                    handleUploadCheckFail(jqXHR);
+                    showPasteCodePanel();
+                    setPasteCodeBusy(false);
+                },
+                function() {
+                    alert(uiText('uiUnexpectedUploadCheck', 'La respuesta de comprobación de subida no es válida.'));
+                    showPasteCodePanel();
+                    setPasteCodeBusy(false);
+                });
+        }
+
+        var uploadSizeLimit = 26214400;
+        var uploadBusy = false;
+        $(function() {
+            $.ajaxSetup({ cache: false });
+
+            var uploadUrl = '/UploadSave';
+            var checkUrl = '/UploadCheck';
+            var editUrl = '/SaveEdit2';
+
+            bindUploadDropExclusions($(document));
+
+            $('#togglePasteCode').on('click', function() {
+                if ($('#pasteCodePanel').is(':visible')) {
+                    hidePasteCodePanel(false);
+                } else {
+                    showPasteCodePanel();
+                }
+            });
+
+            $('#cancelPasteCode').on('click', function() {
+                hidePasteCodePanel(false);
+            });
+
+            $('#submitPasteCode').on('click', function() {
+                submitPastedCode(checkUrl, uploadUrl, editUrl);
+            });
+
+            $('#fileupload').fileupload({
+                url: uploadUrl,
+                dropZone: $(document),
+                dataType: 'json',
+                paramNombre: 'file',
+
+                maxNumberOfFiles: 1,
+                maxFileSize: uploadSizeLimit,
+                singleFileUploads: false,
+                autoUpload: false,
+
+                drop: function(e, data) {
+                    $('#editorForm').hide();
+                    $('#news').show();
+                },
+
+                add: function(e, data) {
+                    if (uploadBusy) {
+                        return false;
+                    }
+
+                    if (!validateFiles(data.files)) {
+                        return false;
+                    }
+
+                    uploadBusy = true;
+
+                    hidePasteCodePanel(false);
+                    setUploadProgress(0);
+
+                    probeFileReadable(data.files[0], function() {
+                        runUploadCheck(
+                            checkUrl,
+                            function() {
+                                data.submit();
+                            },
+                            function(result) {
+                                uploadBusy = false;
+                                handleUploadDone(result, editUrl);
+                            },
+                            function(jqXHR) {
+                                uploadBusy = false;
+                                handleUploadCheckFail(jqXHR);
+                            },
+                            function() {
+                                uploadBusy = false;
+                                alert(uiText('uiUnexpectedUploadCheck', 'La respuesta de comprobación de subida no es válida.'));
+                            });
+                    }, function() {
+                        uploadBusy = false;
+                        handleFileReadFail();
+                    });
+
+                    return false;
+                },
+
+                done: function(e, data) {
+                    uploadBusy = false;
+                    handleUploadDone(data.result, editUrl);
+                },
+
+                fail: function(e, data) {
+                    uploadBusy = false;
+                    handleUploadFail(data && data.jqXHR ? data.jqXHR : null);
+                },
+
+                progressall: function(e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    setUploadProgress(progress);
+                },
+
+                send: function(e, data) {
+                    if (!validateFiles(data.files)) {
+                        uploadBusy = false;
+                        return false;
+                    }
+
+                    hidePasteCodePanel(false);
+                    return true;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $(document).on("keydown", "input", function(event) {
+                if (event.keyCode == 13) {
+                    if ($(this).closest('#loginForm, #registerForm, #supportForm').length) {
+                        return;
+                    }
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(function() {
+            function showView(view) {
+                $('.pageview').hide();
+                if (view === 'home') {
+                    $('#homeView').show();
+                    $('#news').show();
+                } else if (view === 'editor') {
+                    $('#editorView').show();
+                } else if (view === 'support') {
+                    $('#supportView').show();
+                } else if (view === 'login') {
+                    $('#loginView').show();
+                } else if (view === 'register') {
+                    $('#registerView').show();
+                } else if (view === 'formats') {
+                    $('#formatsView').show();
+                }
+            }
+
+            function showViewFromHash() {
+                var hash = window.location.hash.replace('#', '');
+                var views = {
+                    editorView: 'editor',
+                    supportView: 'support',
+                    loginView: 'login',
+                    registerView: 'register',
+                    formatsView: 'formats',
+                    homeView: 'home'
+                };
+
+                showView(views[hash] || 'home');
+            }
+
+            function setDarkPref(value) {
+                document.cookie = 'save-editor-theme-v2=' + value + '; path=/; max-age=31536000; samesite=lax';
+                try { localStorage.setItem('save-editor-theme-v2', value); } catch (e) { }
+            }
+
+            function applyThemeStyles(isDark) {
+                var background = isDark ? '#0f172a' : '#f8fafc';
+                var foreground = isDark ? '#e2e8f0' : '#172033';
+                document.documentElement.style.setProperty('background', background, 'important');
+                document.body.style.setProperty('background', background, 'important');
+                document.body.style.setProperty('color', foreground, 'important');
+            }
+
+            function readStoredUsers() {
+                try {
+                    var stored = JSON.parse(localStorage.getItem('users'));
+                    return Array.isArray(stored) ? stored : [];
+                } catch (ex) {
+                    return [];
+                }
+            }
+
+            function saveStoredUsers(users) {
+                try {
+                    localStorage.setItem('users', JSON.stringify(users));
+                    return true;
+                } catch (ex) {
+                    return false;
+                }
+            }
+
+            function closeMobileNav() {
+                $('#primaryNavigation').removeClass('is-open');
+                $('#mobileNavToggle')
+                    .attr('aria-expanded', 'false')
+                    .attr('aria-label', 'Abrir menú');
+            }
+
+            $('#navHome').on('click', function(e) {
+                e.preventDefault();
+                showView('home');
+                closeMobileNav();
+            });
+
+            $('#mobileNavToggle').on('click', function() {
+                var $menu = $('#primaryNavigation');
+                var isOpen = $menu.hasClass('is-open');
+                $menu.toggleClass('is-open', !isOpen);
+                $(this)
+                    .attr('aria-expanded', !isOpen ? 'true' : 'false')
+                    .attr('aria-label', !isOpen ? 'Cerrar menú' : 'Abrir menú');
+            });
+
+            $('#navEditors').on('click', function(e) {
+                e.preventDefault();
+                showView('editor');
+                closeMobileNav();
+            });
+
+            $('#navSoporte').on('click', function(e) {
+                e.preventDefault();
+                showView('support');
+                closeMobileNav();
+            });
+
+            $('#navIniciarSesion').on('click', function(e) {
+                e.preventDefault();
+                showView('login');
+                closeMobileNav();
+            });
+
+            $('#navRegister').on('click', function(e) {
+                e.preventDefault();
+                showView('register');
+                closeMobileNav();
+            });
+
+            $('#navFormats').on('click', function(e) {
+                e.preventDefault();
+                showView('formats');
+                closeMobileNav();
+            });
+
+            $('#supportForm').on('submit', function(e) {
+                e.preventDefault();
+                var name = $.trim($('#supportName').val());
+                var email = $.trim($('#supportEmail').val());
+                var msg = $.trim($('#supportMessage').val());
+                if (!name || !email || !msg) {
+                    $('#supportResult').text('Completa todos los campos.').show();
+                    return;
+                }
+                $('#supportResult').text('Gracias, ' + name + '. Hemos recibido tu solicitud.').show();
+                this.reset();
+            });
+
+            $('#loginForm').on('submit', function(e) {
+                e.preventDefault();
+                var user = $.trim($('#loginUser').val());
+                var pass = $('#loginPassword').val();
+                if (!user || !pass) {
+                    $('#loginResult').text('Introduce tu usuario y contraseña.').show();
+                    return;
+                }
+
+                var users = readStoredUsers();
+
+                var match = null;
+                for (var i = 0; i < users.length; i++) {
+                    if (users[i] && typeof users[i].email === 'string' &&
+                        users[i].email.toLowerCase() === user.toLowerCase() &&
+                        users[i].password === pass) {
+                        match = users[i];
+                        break;
+                    }
+                }
+
+                if (!match) {
+                    $('#loginResult').text('El correo o la contraseña no son válidos. Inténtalo de nuevo o crea una cuenta.').show();
+                    return;
+                }
+
+                try {
+                    localStorage.setItem('currentUser', JSON.stringify({ firstName: match.firstName, lastName: match.lastName, email: match.email }));
+                } catch (ex) { }
+
+                $('#loginResult').text('¡Bienvenido, ' + match.firstName + '!').show();
+                showLoggedIn(match.firstName);
+                this.reset();
+            });
+
+            $('#registerForm').on('submit', function(e) {
+                e.preventDefault();
+                var firstName = $.trim($('#regFirstName').val());
+                var lastName = $.trim($('#regLastName').val());
+                var email = $.trim($('#regEmail').val());
+                var pass = $('#regPassword').val();
+                var confirm = $('#regConfirm').val();
+                var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+                if (!firstName || !lastName || !email || !pass || !confirm) {
+                    $('#registerResult').text('Completa todos los campos.').show();
+                    return;
+                }
+                if (!emailOk) {
+                    $('#registerResult').text('Introduce un correo electrónico válido.').show();
+                    return;
+                }
+                if (pass.length < 6) {
+                    $('#registerResult').text('La contraseña debe tener al menos 6 caracteres.').show();
+                    return;
+                }
+                if (pass !== confirm) {
+                    $('#registerResult').text('Las contraseñas no coinciden.').show();
+                    return;
+                }
+
+                var users = readStoredUsers();
+
+                var exists = false;
+                for (var j = 0; j < users.length; j++) {
+                    if (users[j] && typeof users[j].email === 'string' &&
+                        users[j].email.toLowerCase() === email.toLowerCase()) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (exists) {
+                    $('#registerResult').text('Ya existe una cuenta con este correo. Inicia sesión.').show();
+                    return;
+                }
+
+                users.push({ firstName: firstName, lastName: lastName, email: email, password: pass });
+                if (!saveStoredUsers(users)) {
+                    $('#registerResult').text('No se pudo guardar la cuenta en este navegador. Revisa el almacenamiento local e inténtalo de nuevo.').show();
+                    return;
+                }
+
+                $('#registerResult').text('Cuenta creada correctamente, ' + firstName + ' ' + lastName + '. ¡Ya puedes iniciar sesión!').show();
+                this.reset();
+            });
+
+            $('#logoutBtn').on('click', function() {
+                try {
+                    localStorage.removeItem('currentUser');
+                } catch (ex) { }
+                $('#welcomeBanner').hide();
+                showView('home');
+                closeMobileNav();
+            });
+
+            function showLoggedIn(name) {
+                $('#welcomeText').text('¡Bienvenido, ' + name + '! Has iniciado sesión.');
+                $('#welcomeBanner').show();
+            }
+
+            try {
+                var currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (currentUser && currentUser.firstName) {
+                    showLoggedIn(currentUser.firstName);
+                }
+            } catch (ex) { }
+
+            $('#darkToggle').on('click', function(e) {
+                e.preventDefault();
+                var isDark = document.documentElement.classList.contains('theme-dark');
+                document.documentElement.classList.toggle('theme-dark', !isDark);
+                document.documentElement.classList.toggle('theme-light', isDark);
+                setDarkPref(isDark ? 1 : 0);
+                var nextIsDark = !isDark;
+                applyThemeStyles(nextIsDark);
+                $(this).find('#themeToggleIcon').text(nextIsDark ? '☀' : '☾')
+                    .end().attr('aria-pressed', nextIsDark ? 'true' : 'false')
+                    .attr('aria-label', nextIsDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro')
+                    .attr('title', nextIsDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+            });
+
+            var initialIsDark = document.documentElement.classList.contains('theme-dark');
+            applyThemeStyles(initialIsDark);
+            $('#darkToggle').find('#themeToggleIcon').text(initialIsDark ? '☀' : '☾')
+                .end().attr('aria-pressed', initialIsDark ? 'true' : 'false')
+                .attr('aria-label', initialIsDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro')
+                .attr('title', initialIsDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+
+            window.addEventListener('hashchange', showViewFromHash);
+            showViewFromHash();
+        });
+    </script>
+</body>
+</html>

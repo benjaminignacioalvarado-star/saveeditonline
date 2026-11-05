@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Consejos y novedades sobre edición de partidas y formatos de guardado.">
+    <title>Blog | Editor de partidas online</title>
+    <script>window.tailwind = { corePlugins: { preflight: false } };</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>(function(){try{if(localStorage.getItem('save-editor-theme-v2') === '1'){document.documentElement.classList.add('theme-dark');}}catch(e){}})();</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/site.css">
+    <style>[x-cloak]{display:none!important}.site-page{min-height:calc(100vh - 130px)}</style>
+</head>
+<body x-data="{ menuOpen: false, resourcesOpen: false, filter: 'todos' }">
+    <header class="navbar navbar-inverse navbar-fixed-top"><nav class="container" aria-label="Navegación principal">
+        <div class="navbar-header"><button type="button" class="navbar-toggle" @click="menuOpen = !menuOpen" :aria-expanded="menuOpen" aria-label="Abrir menú"><span class="sr-only">Abrir menú</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="index.html" class="navbar-brand" aria-label="Ir al inicio"><span class="brand-mark" aria-hidden="true"><span class="glyphicon glyphicon-floppy-disk"></span></span><span class="brand-name">Editor de partidas <span>Online</span></span></a></div>
+        <div class="navbar-collapse site-nav" :class="{ 'collapse': !menuOpen, 'in': menuOpen }"><ul class="nav navbar-nav"><li><a href="index.html">Inicio</a></li><li><a href="servicios.html">Servicios</a></li><li><a href="nosotros.html">Nosotros</a></li><li class="active"><a href="blog.html" aria-current="page">Blog</a></li><li><a href="contacto.html">Contacto</a></li><li><a href="index.html#editorView">Editor</a></li><li><div class="relative"><button type="button" class="nav-action" @click="resourcesOpen = !resourcesOpen" :aria-expanded="resourcesOpen">Recursos <span aria-hidden="true">⌄</span></button><div x-cloak x-show="resourcesOpen" @click.outside="resourcesOpen = false" x-transition class="absolute right-0 z-30 mt-1 min-w-48 rounded-xl border border-slate-600 bg-slate-900 p-2 shadow-xl"><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#formatsView">Formatos</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="contacto.html#faq">FAQ</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#supportView">Soporte</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#registerView">Registrarse</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#loginView">Iniciar sesión</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="https://translate.saveeditonline.com" target="_blank" rel="noopener">Traductor de juegos</a></div></div></li></ul></div>
+                <div class="pixel-companion" aria-hidden="true"><span class="pixel-companion-shadow"></span><span class="pixel-companion-head"></span><span class="pixel-companion-body"></span><span class="pixel-companion-sword"></span></div>        </nav></header>    <div class="pixel-scenery" aria-hidden="true"><span class="pixel-stars"></span><span class="pixel-forest pixel-forest-back"></span><span class="pixel-forest pixel-forest-front"></span></div>
+    <main class="container body-content site-page">
+        <section class="jumbotron" aria-labelledby="blog-title"><div class="relative z-10 max-w-3xl"><p class="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-cyan-200">Guías y novedades</p><h1 id="blog-title">Aprende a cuidar tus partidas</h1><p class="lead">Consejos prácticos para encontrar archivos, usar respaldos y entender los formatos más habituales.</p></div></section>
+        <section aria-labelledby="posts-title"><div class="mb-5 flex flex-wrap items-center justify-between gap-3"><h2 id="posts-title" class="m-0 text-2xl font-bold text-white">Últimos artículos</h2><div class="flex flex-wrap gap-2" role="tablist" aria-label="Filtrar artículos"><button type="button" class="rounded-lg px-3 py-2 text-sm font-bold" :class="filter === 'todos' ? 'bg-indigo-500 text-white' : 'bg-slate-700 text-slate-300'" @click="filter = 'todos'">Todos</button><button type="button" class="rounded-lg px-3 py-2 text-sm font-bold" :class="filter === 'guias' ? 'bg-indigo-500 text-white' : 'bg-slate-700 text-slate-300'" @click="filter = 'guias'">Guías</button><button type="button" class="rounded-lg px-3 py-2 text-sm font-bold" :class="filter === 'novedades' ? 'bg-indigo-500 text-white' : 'bg-slate-700 text-slate-300'" @click="filter = 'novedades'">Novedades</button></div></div>
+            <div class="grid gap-5 md:grid-cols-3">
+                <article x-show="filter === 'todos' || filter === 'guias'" class="rounded-2xl border border-slate-700 bg-slate-800/80 p-6 shadow-lg"><p class="text-sm font-bold uppercase text-cyan-300">Guía · 8 min</p><h3 class="mt-2 text-xl font-bold text-white">Cómo encontrar tus archivos de guardado</h3><p class="mt-3 text-slate-300">Localiza partidas de Unity, Unreal Engine y RPG Maker en Windows antes de editarlas.</p><a href="contacto.html" class="mt-4 inline-block font-bold text-cyan-300 hover:text-cyan-100">Leer más →</a></article>
+                <article x-show="filter === 'todos' || filter === 'guias'" class="rounded-2xl border border-slate-700 bg-slate-800/80 p-6 shadow-lg"><p class="text-sm font-bold uppercase text-cyan-300">Guía · 5 min</p><h3 class="mt-2 text-xl font-bold text-white">Respaldos: la regla que evita perder progreso</h3><p class="mt-3 text-slate-300">Aprende un flujo simple para conservar el original y probar cambios con seguridad.</p><a href="index.html#editorView" class="mt-4 inline-block font-bold text-cyan-300 hover:text-cyan-100">Probar el flujo →</a></article>
+                <article x-show="filter === 'todos' || filter === 'novedades'" class="rounded-2xl border border-slate-700 bg-slate-800/80 p-6 shadow-lg"><p class="text-sm font-bold uppercase text-cyan-300">Novedad · 3 min</p><h3 class="mt-2 text-xl font-bold text-white">Más formatos, misma experiencia</h3><p class="mt-3 text-slate-300">Seguimos ampliando la compatibilidad con partidas comprimidas, JSON y datos serializados.</p><a href="index.html#formatsView" class="mt-4 inline-block font-bold text-cyan-300 hover:text-cyan-100">Ver formatos →</a></article>
+            </div>
+        </section>
+    </main>
+    <footer class="container border-t border-slate-700 py-6 text-slate-400">
+        <p class="m-0">&copy; 2026 - Online Save Editor · <a href="mailto:support@saveeditonline.com" class="text-cyan-300 hover:text-cyan-100">Soporte</a></p>
+    </footer>
+</body>
+</html>

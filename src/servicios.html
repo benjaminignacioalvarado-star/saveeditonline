@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Servicios y herramientas de Save Editor Online para editar partidas de videojuegos.">
+    <title>Servicios | Editor de partidas online</title>
+    <script>window.tailwind = { corePlugins: { preflight: false } };</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>(function(){try{if(localStorage.getItem('save-editor-theme-v2') === '1'){document.documentElement.classList.add('theme-dark');}}catch(e){}})();</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/site.css">
+    <style>[x-cloak]{display:none!important}.site-page{min-height:calc(100vh - 130px)}</style>
+</head>
+<body x-data="{ menuOpen: false, resourcesOpen: false, modalOpen: false, activeTab: 'edicion' }">
+    <header class="navbar navbar-inverse navbar-fixed-top">
+        <nav class="container" aria-label="Navegación principal">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" @click="menuOpen = !menuOpen" :aria-expanded="menuOpen" aria-label="Abrir menú">
+                    <span class="sr-only">Abrir menú</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+                </button>
+                <a href="index.html" class="navbar-brand" aria-label="Ir al inicio">
+                    <span class="brand-mark" aria-hidden="true"><span class="glyphicon glyphicon-floppy-disk"></span></span>
+                    <span class="brand-name">Editor de partidas <span>Online</span></span>
+                </a>
+            </div>
+            <div class="navbar-collapse site-nav" :class="{ 'collapse': !menuOpen, 'in': menuOpen }">
+                <ul class="nav navbar-nav">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li class="active"><a href="servicios.html" aria-current="page">Servicios</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                    <li><a href="index.html#editorView">Editor</a></li>
+                    <li>
+                        <div class="relative">
+                            <button type="button" class="nav-action" @click="resourcesOpen = !resourcesOpen" :aria-expanded="resourcesOpen">Recursos <span aria-hidden="true">⌄</span></button>
+                            <div x-cloak x-show="resourcesOpen" @click.outside="resourcesOpen = false" x-transition class="absolute right-0 z-30 mt-1 min-w-48 rounded-xl border border-slate-600 bg-slate-900 p-2 shadow-xl">
+                                <a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#formatsView">Formatos</a>
+                                <a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="contacto.html#faq">Preguntas frecuentes</a>
+                                <a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#supportView">Soporte</a>
+                                <a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#registerView">Registrarse</a>
+                                <a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#loginView">Iniciar sesión</a>
+                                <a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="https://translate.saveeditonline.com" target="_blank" rel="noopener">Traductor de juegos</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+                    <div class="pixel-companion" aria-hidden="true"><span class="pixel-companion-shadow"></span><span class="pixel-companion-head"></span><span class="pixel-companion-body"></span><span class="pixel-companion-sword"></span></div>        </nav>
+    </header>    <div class="pixel-scenery" aria-hidden="true"><span class="pixel-stars"></span><span class="pixel-forest pixel-forest-back"></span><span class="pixel-forest pixel-forest-front"></span></div>
+
+    <main class="container body-content site-page">
+        <section class="jumbotron" aria-labelledby="services-title">
+            <div class="relative z-10 max-w-3xl">
+                <p class="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-cyan-200">Herramientas para tu partida</p>
+                <h1 id="services-title">Servicios diseñados para jugar a tu manera</h1>
+                <p class="lead">Edita, convierte y entiende tus archivos de guardado desde una interfaz clara, rápida y compatible con múltiples motores.</p>
+                <a href="index.html#editorView" class="btn btn-primary btn-lg">Abrir el editor</a>
+                <button type="button" class="btn btn-default btn-lg ml-2" @click="modalOpen = true">Ver detalles</button>
+            </div>
+        </section>
+
+        <section class="mb-8 grid gap-5 md:grid-cols-3" aria-label="Servicios disponibles">
+            <article class="rounded-2xl border border-slate-700 bg-slate-800/80 p-6 shadow-lg">
+                <div class="mb-4 text-3xl" aria-hidden="true">🛠️</div>
+                <h2 class="text-xl font-bold text-white">Edición de partidas</h2>
+                <p class="mt-3 text-slate-300">Modifica oro, objetos, estadísticas, variables y textos con editores adaptados a cada formato.</p>
+                <a href="index.html#editorView" class="mt-4 inline-block font-bold text-cyan-300 hover:text-cyan-100">Comenzar →</a>
+            </article>
+            <article class="rounded-2xl border border-slate-700 bg-slate-800/80 p-6 shadow-lg">
+                <div class="mb-4 text-3xl" aria-hidden="true">🔍</div>
+                <h2 class="text-xl font-bold text-white">Detección de formatos</h2>
+                <p class="mt-3 text-slate-300">Analizamos la extensión y el contenido para ofrecerte el flujo correcto sin configuraciones complicadas.</p>
+                <a href="index.html#formatsView" class="mt-4 inline-block font-bold text-cyan-300 hover:text-cyan-100">Ver formatos →</a>
+            </article>
+            <article class="rounded-2xl border border-slate-700 bg-slate-800/80 p-6 shadow-lg">
+                <div class="mb-4 text-3xl" aria-hidden="true">💬</div>
+                <h2 class="text-xl font-bold text-white">Soporte</h2>
+                <p class="mt-3 text-slate-300">Si una partida no funciona como esperabas, nuestro canal de soporte te ayuda a encontrar el siguiente paso.</p>
+                <a href="contacto.html" class="mt-4 inline-block font-bold text-cyan-300 hover:text-cyan-100">Contactar →</a>
+            </article>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-700 bg-slate-800/80 p-6 shadow-lg" aria-labelledby="workflow-title">
+            <h2 id="workflow-title" class="mb-5 text-2xl font-bold text-white">Elige el flujo adecuado</h2>
+            <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Tipos de servicio">
+                <button type="button" role="tab" class="rounded-lg px-4 py-2 font-bold" :class="activeTab === 'edicion' ? 'bg-indigo-500 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'" @click="activeTab = 'edicion'" :aria-selected="activeTab === 'edicion'">Edición</button>
+                <button type="button" role="tab" class="rounded-lg px-4 py-2 font-bold" :class="activeTab === 'texto' ? 'bg-indigo-500 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'" @click="activeTab = 'texto'" :aria-selected="activeTab === 'texto'">Código y texto</button>
+                <button type="button" role="tab" class="rounded-lg px-4 py-2 font-bold" :class="activeTab === 'ayuda' ? 'bg-indigo-500 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'" @click="activeTab = 'ayuda'" :aria-selected="activeTab === 'ayuda'">Ayuda</button>
+            </div>
+            <p x-show="activeTab === 'edicion'" role="tabpanel" class="m-0 text-slate-300">Sube un único archivo y espera a que se cargue el editor específico para ese formato.</p>
+            <p x-show="activeTab === 'texto'" role="tabpanel" class="m-0 text-slate-300">Usa “Pegar código” para datos Base64, JSON o texto serializado que puedas copiar de forma segura.</p>
+            <p x-show="activeTab === 'ayuda'" role="tabpanel" class="m-0 text-slate-300">Consulta formatos compatibles y contacta con soporte si necesitas revisar un caso concreto.</p>
+        </section>
+    </main>
+    <footer class="container border-t border-slate-700 py-6 text-slate-400">
+        <p class="m-0">&copy; 2026 - Online Save Editor · <a href="mailto:support@saveeditonline.com" class="text-cyan-300 hover:text-cyan-100">Soporte</a></p>
+    </footer>
+
+    <div x-cloak x-show="modalOpen" x-transition class="fixed inset-0 z-[200] grid place-items-center bg-slate-950/80 p-4" role="dialog" aria-modal="true" aria-labelledby="details-title" @keydown.escape.window="modalOpen = false">
+        <div class="w-full max-w-lg rounded-2xl border border-slate-600 bg-slate-900 p-6 shadow-2xl" @click.stop>
+            <div class="flex items-start justify-between gap-4"><h2 id="details-title" class="m-0 text-2xl font-bold text-white">Un servicio, varios motores</h2><button type="button" class="text-2xl text-slate-300" aria-label="Cerrar" @click="modalOpen = false">&times;</button></div>
+            <p class="mt-4 text-slate-300">La experiencia mantiene los mismos pasos aunque cambie el motor del juego: identifica, edita y descarga una copia actualizada.</p>
+            <button type="button" class="btn btn-primary mt-4" @click="modalOpen = false">Cerrar</button>
+        </div>
+    </div>
+</body>
+</html>
+

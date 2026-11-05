@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --font-pixel: "Courier New", Consolas, monospace;
+  --color-rpg-night: #0b1020;
+  --color-rpg-panel: #17213b;
+  --color-rpg-purple: #7c5cff;
+  --color-rpg-cyan: #42e8f4;
+  --color-rpg-gold: #ffd166;
+}
+
+@source "../src";

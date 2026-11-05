@@ -1,0 +1,14 @@
+{
+  "name": "saveeditonline-rpg",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Editor de partidas online con interfaz RPG pixel art.",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.14",
+    "tailwindcss": "^4.1.14"
+  }
+}
