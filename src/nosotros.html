@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0f172a">
     <meta name="description" content="Conoce el propósito y los valores de Save Editor Online.">
     <title>Nosotros | Editor de partidas online</title>
     <script>window.tailwind = { corePlugins: { preflight: false } };</script>
@@ -23,7 +24,7 @@
             <div class="navbar-collapse site-nav" :class="{ 'collapse': !menuOpen, 'in': menuOpen }">
                 <ul class="nav navbar-nav">
                     <li><a href="index.html">Inicio</a></li><li><a href="servicios.html">Servicios</a></li><li class="active"><a href="nosotros.html" aria-current="page">Nosotros</a></li><li><a href="blog.html">Blog</a></li><li><a href="contacto.html">Contacto</a></li><li><a href="index.html#editorView">Editor</a></li>
-                    <li><div class="relative"><button type="button" class="nav-action" @click="resourcesOpen = !resourcesOpen" :aria-expanded="resourcesOpen">Recursos <span aria-hidden="true">⌄</span></button><div x-cloak x-show="resourcesOpen" @click.outside="resourcesOpen = false" x-transition class="absolute right-0 z-30 mt-1 min-w-48 rounded-xl border border-slate-600 bg-slate-900 p-2 shadow-xl"><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#formatsView">Formatos</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="contacto.html#faq">FAQ</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#supportView">Soporte</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#registerView">Registrarse</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#loginView">Iniciar sesión</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="https://translate.saveeditonline.com" target="_blank" rel="noopener">Traductor de juegos</a></div></div></li>
+                    <li><div class="relative"><button type="button" class="nav-action" @click="resourcesOpen = !resourcesOpen" :aria-expanded="resourcesOpen">Recursos <span aria-hidden="true">⌄</span></button><div x-cloak x-show="resourcesOpen" @click.outside="resourcesOpen = false" x-transition class="absolute right-0 z-30 mt-1 min-w-48 rounded-xl border border-slate-600 bg-slate-900 p-2 shadow-xl"><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#formatsView">Formatos</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="contacto.html#faq">FAQ</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#supportView">Soporte</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#registerView">Registrarse</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="index.html#loginView">Iniciar sesión</a><a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="https://translate.saveeditonline.com" target="_blank" rel="noopener">Traductor de juegos</a></div></div></li><li><a class="nav-action nav-action-icon" href="#" id="darkToggle" title="Cambiar a modo claro" aria-label="Cambiar a modo claro" aria-pressed="true"><span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">☀</span><span class="sr-only">Cambiar tema oscuro</span></a></li>
                 </ul>
             </div>
                     <div class="pixel-companion" aria-hidden="true"><span class="pixel-companion-shadow"></span><span class="pixel-companion-head"></span><span class="pixel-companion-body"></span><span class="pixel-companion-sword"></span></div>        </nav>
@@ -48,6 +49,7 @@
     <footer class="container border-t border-slate-700 py-6 text-slate-400">
         <p class="m-0">&copy; 2026 - Online Save Editor · <a href="mailto:support@saveeditonline.com" class="text-cyan-300 hover:text-cyan-100">Soporte</a></p>
     </footer>
+    <script src="assets/js/theme-toggle.js"></script>
 </body>
 </html>
 

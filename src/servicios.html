@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0f172a">
     <meta name="description" content="Servicios y herramientas de Save Editor Online para editar partidas de videojuegos.">
     <title>Servicios | Editor de partidas online</title>
     <script>window.tailwind = { corePlugins: { preflight: false } };</script>
@@ -45,6 +46,12 @@
                                 <a class="block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800" href="https://translate.saveeditonline.com" target="_blank" rel="noopener">Traductor de juegos</a>
                             </div>
                         </div>
+                    </li>
+                    <li>
+                        <a class="nav-action nav-action-icon" href="#" id="darkToggle" title="Cambiar a modo claro" aria-label="Cambiar a modo claro" aria-pressed="true">
+                            <span id="themeToggleIcon" class="theme-toggle-icon" aria-hidden="true">☀</span>
+                            <span class="sr-only">Cambiar tema oscuro</span>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -106,6 +113,7 @@
             <button type="button" class="btn btn-primary mt-4" @click="modalOpen = false">Cerrar</button>
         </div>
     </div>
+    <script src="assets/js/theme-toggle.js"></script>
 </body>
 </html>
 
